@@ -1,74 +1,69 @@
-import React, { Component, Fragment } from 'react';
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  Container
-} from 'reactstrap';
-import LoginModal from './auth/LoginModal';
-import RegisterModal from './auth/RegisterModal';
-import Logout from './auth/Logout';
-import { connect } from 'react-redux';
+import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import AppBar from '@material-ui/core/AppBar';
+import classNames from 'classnames';
+import IconButton from '@material-ui/core/IconButton';
+import LoginModal from './auth/LoginModal';
+import Logout from './auth/Logout';
+import MenuIcon from '@material-ui/icons/Menu';
+import RegisterModal from './auth/RegisterModal';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { Link } from 'react-router-dom';
 
-class AppNavbar extends Component {
-  state = {
-    isOpen: false
-  };
-
+class AppNavbar extends PureComponent {
   static propTypes = {
-    auth: PropTypes.object.isRequired
-  }
-
-  toggle = () => {
-    const { isOpen } = this.state;
-    this.setState({ isOpen: !isOpen });
+    doDrawerOpen: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    classes: PropTypes.object.isRequired
   };
 
   render() {
+
+    const { classes, open, doDrawerOpen } = this.props;
     const { isAuthenticated, user } = this.props.auth;
+
     const authLinks = (
       <Fragment>
-        <NavItem>
-          <span className="navbar-text mr-3">
-            <strong> {user ? `Welcome ${user.name}` : ''} </strong>
-          </span>
-        </NavItem>
-        <NavItem>
-          <Logout />
-        </NavItem>
+        <span className="navbar-text mr-3">
+          <strong> {user ? `Welcome ${user.name}` : ''} </strong>
+        </span>
+        <Logout />
       </Fragment>
     );
 
     const guestLinks = (
       <Fragment>
-        <NavItem>
-          <RegisterModal />
-        </NavItem>
-        <NavItem>
-          <LoginModal />
-        </NavItem>
+        <RegisterModal />
+        <LoginModal />
       </Fragment>
     );
 
     return (
-      <div>
-        <Navbar color="dark" dark expand="sm" className="mb-5">
-          <Container>
-            {isAuthenticated ? <NavbarBrand href="/shop">Shopping List</NavbarBrand> : <NavbarBrand href="/">Shopping</NavbarBrand>}
-
-            <NavbarToggler onClick={this.toggle} />
-            <Collapse isOpen={this.state.isOpen} navbar>
-              <Nav className="ml-auto" navbar>
-                {isAuthenticated ? authLinks : guestLinks}
-              </Nav>
-            </Collapse>
-          </Container>
-        </Navbar>
-      </div>
+      <AppBar
+        position="fixed"
+        className={classNames(classes.appBar, {
+          [classes.appBarShift]: open,
+        })}
+      >
+        <Toolbar disableGutters={!open}>
+          <IconButton
+            color="inherit"
+            aria-label="Open drawer"
+            onClick={doDrawerOpen}
+            className={classNames(classes.menuButton, {
+              [classes.hide]: open,
+            })}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit" className={classes.grow}>
+            {isAuthenticated ? <Link to='/shop'>Shopping List</Link> : <Link to='/'>Shopping</Link>}
+          </Typography>
+          {isAuthenticated ? authLinks : guestLinks}
+        </Toolbar>
+      </AppBar>
     );
   }
 }

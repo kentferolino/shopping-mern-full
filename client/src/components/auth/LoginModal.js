@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  NavLink,
-  Alert
-} from 'reactstrap';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../../actions/authActions'
@@ -77,44 +71,43 @@ class LoginModal extends Component {
 
   render() {
     return (
-      <div color="dark" onClick={this.toggle}>
-        <NavLink onClick={this.toggle} href='#' >
+      <div>
+        <Button onClick={this.toggle} href='#' >
           Login
-				</NavLink>
-        <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>Login</ModalHeader>
-          <ModalBody>
+				</Button>
+        <Dialog open={this.state.modal} onClose={this.toggle}>
+          <DialogTitle onClose={this.toggle} id="login-dialog-title">Login</DialogTitle>
+          <DialogContent>
             {this.state.msg ?
-              (<Alert color='danger' >{this.state.msg}</Alert>)
+              (<DialogContentText id="alert-dialog-description" color="secondary">{this.state.msg}</DialogContentText>)
               : null
             }
-            <Form onSubmit={this.onSubmit}>
-              <FormGroup>
-                <Label for="email">Email</Label>
-                <Input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="Email"
-                  className="mb-2"
-                  onChange={this.onChange}
-                />
-                <Label for="password">Password</Label>
-                <Input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="Password"
-                  className="mb-2"
-                  onChange={this.onChange}
-                />
-                <Button color="dark" style={{ marginTop: '2rem' }} block>
-                  Login
-								</Button>
-              </FormGroup>
-            </Form>
-          </ModalBody>
-        </Modal>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Email Address"
+              type="email"
+              name="email"
+              id="email"
+              onChange={this.onChange}
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Password"
+              type="password"
+              name="password"
+              id="password"
+              onChange={this.onChange}
+              fullWidth
+            />
+            <DialogActions>
+              <Button onClick={this.onSubmit}>
+                Login
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

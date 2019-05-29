@@ -1,22 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import AppNavbar from '../AppNavbar';
+import { Route, Redirect } from 'react-router-dom';
 import Shopping from '../Shopping';
 import Home from './Home';
 import Front from './Front';
 import { connect } from 'react-redux';
-
-const routes = [
-	{
-		path: "/bubblegum",
-		main: () => <h2>Bubblegum</h2>
-	},
-	{
-		path: "/shoelaces",
-		main: () => <h2>Shoelaces</h2>
-	}
-];
+import AppWrapper from '../AppWrapper';
 
 function PrivateRoute({ component: Component, auth, ...rest }) {
 	return (
@@ -44,25 +33,15 @@ class Main extends Component {
 	};
 	render() {
 		const { auth } = this.props;
-		debugger;
 		return (
 			<Fragment>
 				{auth.isLoading !== true &&
-					<div style={{ flex: 1, padding: "10px" }}>
-						{routes.map((route) => (
-							// Render more <Route>s with the same paths as
-							// above, but different components this time.
-							<Route
-								key={route.path}
-								path={route.path}
-								exact={route.exact}
-								component={route.main}
-							/>
-						))}
-						<Route exact path='/' render={props => { return auth.isAuthenticated ? <Home auth={auth} /> : <Front /> }} />
-						<PrivateRoute path='/home' component={Home} auth={auth} />
-						<PrivateRoute path='/shop' component={Shopping} auth={auth} />
-					</div>}
+					<AppWrapper>
+						<React.Fragment><Route exact path='/' render={props => { return auth.isAuthenticated ? <Home auth={auth} /> : <Front /> }} />
+							<PrivateRoute path='/home' component={Home} auth={auth} />
+							<PrivateRoute path='/shop' component={Shopping} auth={auth} /></React.Fragment>
+					</AppWrapper>
+				}
 			</Fragment>
 		);
 	}
